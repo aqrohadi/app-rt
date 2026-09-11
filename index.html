@@ -304,6 +304,12 @@
                         <textarea id="suratKeperluan" rows="3" required class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none text-sm transition-all" placeholder="Jelaskan detail keperluan pembuatan surat..."></textarea>
                     </div>
 
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">Upload Dokumen Pendukung</label>
+                        <input type="file" id="suratDokumen" accept=".pdf,.jpg,.jpeg,.png" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none text-sm transition-all bg-white">
+                        <p class="text-xs text-slate-500 mt-2">Format: PDF/JPG/PNG. Maksimal disarankan 5 MB.</p>
+                    </div>
+
                     <div class="pt-2">
                         <button type="submit" id="btnSuratSubmit" class="w-full py-3.5 px-6 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold shadow-lg shadow-brand-600/25 transition-all">
                             <i class="fa-solid fa-paper-plane mr-2"></i> Kirim Permohonan Surat
@@ -781,6 +787,9 @@
         function handleFormSuratSubmit(e) {
             e.preventDefault();
             const btn = document.getElementById('btnSuratSubmit');
+            const fileInput = document.getElementById('suratDokumen');
+            const file = fileInput.files && fileInput.files[0] ? fileInput.files[0] : null;
+
             btn.disabled = true;
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Mengirim Pengajuan...';
 
@@ -792,32 +801,62 @@
                 keperluan: document.getElementById('suratKeperluan').value
             };
 
-            if (typeof google !== 'undefined' && google.script && google.script.run) {
-                google.script.run
-                    .withSuccessHandler(function(res) {
-                        btn.disabled = false;
-                        btn.innerHTML = '<i class="fa-solid fa-paper-plane mr-2"></i> Kirim Permohonan Surat';
-                        if (res.success) {
-                            showToast("Permohonan Terkirim!", res.message, "success");
-                            document.getElementById('formSurat').reset();
-                        } else {
-                            showToast("Gagal", res.message, "error");
-                        }
-                    })
-                    .withFailureHandler(function(err) {
-                        btn.disabled = false;
-                        btn.innerHTML = '<i class="fa-solid fa-paper-plane mr-2"></i> Kirim Permohonan Surat';
-                        showToast("Error", "Gagal: " + err, "error");
-                    })
-                    .submitPengajuanSurat(payload);
-            } else {
-                setTimeout(() => {
-                    btn.disabled = false;
-                    btn.innerHTML = '<i class="fa-solid fa-paper-plane mr-2"></i> Kirim Permohonan Surat';
-                    showToast("Terkirim (Simulasi)", "Pengajuan surat pengantar berhasil dikirim ke Pengurus RT!", "success");
-                    document.getElementById('formSurat').reset();
-                }, 800);
+            if (file && file.size > 5 * 1024 * 1024) {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-paper-plane mr-2"></i> Kirim Permohonan Surat';
+                showToast("File terlalu besar", "Ukuran dokumen maksimal disarankan 5 MB.", "error");
+                return;
             }
+
+            const submitPayload = function(finalPayload) {
+                if (typeof google !== 'undefined' && google.script && google.script.run) {
+                    google.script.run
+                        .withSuccessHandler(function(res) {
+                            btn.disabled = false;
+                            btn.innerHTML = '<i class="fa-solid fa-paper-plane mr-2"></i> Kirim Permohonan Surat';
+                            if (res.success) {
+                                showToast("Permohonan Terkirim!", res.message, "success");
+                                document.getElementById('formSurat').reset();
+                            } else {
+                                showToast("Gagal", res.message, "error");
+                            }
+                        })
+                        .withFailureHandler(function(err) {
+                            btn.disabled = false;
+                            btn.innerHTML = '<i class="fa-solid fa-paper-plane mr-2"></i> Kirim Permohonan Surat';
+                            showToast("Error", "Gagal: " + err, "error");
+                        })
+                        .submitPengajuanSurat(finalPayload);
+                } else {
+                    setTimeout(() => {
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="fa-solid fa-paper-plane mr-2"></i> Kirim Permohonan Surat';
+                        showToast("Terkirim (Simulasi)", "Pengajuan surat pengantar berhasil dikirim ke Pengurus RT!", "success");
+                        document.getElementById('formSurat').reset();
+                    }, 800);
+                }
+            };
+
+            if (!file) {
+                submitPayload(payload);
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                payload.dokumen = {
+                    fileName: file.name,
+                    mimeType: file.type,
+                    data: String(evt.target.result).split(',')[1]
+                };
+                submitPayload(payload);
+            };
+            reader.onerror = function() {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-paper-plane mr-2"></i> Kirim Permohonan Surat';
+                showToast("Gagal", "Dokumen gagal dibaca.", "error");
+            };
+            reader.readAsDataURL(file);
         }
 
         // Form Aspirasi Handler
