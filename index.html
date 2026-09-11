@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil RT Digital - RT 005 / RW 012 Kelurahan Sejahtera</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Font: Plus Jakarta Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            800: '#065f46',
+                            900: '#064e3b',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(229, 231, 235, 0.8);
+        }
+        .bg-grid-pattern {
+            background-image: radial-gradient(#e5e7eb 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col selection:bg-brand-500 selection:text-white">
+
+    <!-- TOP NAVIGATION BAR -->
+    <header class="sticky top-0 z-50 glass-card shadow-sm border-b border-slate-200/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Brand Logo -->
+            <a href="#beranda" class="flex items-center space-x-3 group">
+                <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-brand-600 to-teal-500 flex items-center justify-center text-white shadow-md shadow-brand-500/20 group-hover:scale-105 transition-transform duration-200">
+                    <i class="fa-solid font-bold text-xl fa-house-chimney-window"></i>
+                </div>
+                <div>
+                    <span class="text-xl font-extrabold tracking-tight text-slate-900 block leading-none">RT 005 / RW 012</span>
+                    <span class="text-xs text-brand-600 font-semibold tracking-wide uppercase">Kelurahan Sejahtera</span>
+                </div>
+            </a>
+
+            <!-- Desktop Menu -->
+            <nav class="hidden md:flex items-center space-x-1 lg:space-x-2 text-sm font-semibold text-slate-600">
+                <a href="#beranda" class="px-3 py-2 rounded-lg hover:text-brand-600 hover:bg-slate-100 transition-colors">Beranda</a>
+                <a href="#statistik" class="px-3 py-2 rounded-lg hover:text-brand-600 hover:bg-slate-100 transition-colors">Statistik & Profil</a>
+                <a href="#layanan" class="px-3 py-2 rounded-lg hover:text-brand-600 hover:bg-slate-100 transition-colors">Layanan Mandiri</a>
+                <a href="#umkm" class="px-3 py-2 rounded-lg hover:text-brand-600 hover:bg-slate-100 transition-colors">UMKM Warga</a>
+                <a href="#pengaduan" class="px-3 py-2 rounded-lg hover:text-brand-600 hover:bg-slate-100 transition-colors">Aspirasi</a>
+            </nav>
+
+            <!-- CTA Button Header -->
+            <div class="hidden md:flex items-center space-x-3">
+                <button onclick="openFormWargaModal()" class="inline-flex items-center justify-center px-4 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-semibold text-sm shadow-lg shadow-brand-600/25 transition-all transform active:scale-95">
+                    <i class="fa-solid fa-user-plus mr-2"></i> Isi Pendataan Warga
+                </button>
+            </div>
+
+            <!-- Mobile Toggle -->
+            <button onclick="toggleMobileMenu()" class="md:hidden p-2 rounded-lg text-slate-600 hover:bg-slate-100 focus:outline-none">
+                <i id="mobileMenuIcon" class="fa-solid fa-bars text-xl"></i>
+            </button>
+        </div>
+
+        <!-- Mobile Menu Container -->
+        <div id="mobileMenu" class="hidden md:hidden border-t border-slate-200 bg-white/95 px-4 pt-3 pb-6 space-y-2">
+            <a href="#beranda" onclick="toggleMobileMenu()" class="block px-3 py-2.5 rounded-lg text-base font-semibold text-slate-700 hover:bg-brand-50 hover:text-brand-600">Beranda</a>
+            <a href="#statistik" onclick="toggleMobileMenu()" class="block px-3 py-2.5 rounded-lg text-base font-semibold text-slate-700 hover:bg-brand-50 hover:text-brand-600">Statistik & Profil</a>
+            <a href="#layanan" onclick="toggleMobileMenu()" class="block px-3 py-2.5 rounded-lg text-base font-semibold text-slate-700 hover:bg-brand-50 hover:text-brand-600">Layanan Mandiri</a>
+            <a href="#umkm" onclick="toggleMobileMenu()" class="block px-3 py-2.5 rounded-lg text-base font-semibold text-slate-700 hover:bg-brand-50 hover:text-brand-600">UMKM Warga</a>
+            <a href="#pengaduan" onclick="toggleMobileMenu()" class="block px-3 py-2.5 rounded-lg text-base font-semibold text-slate-700 hover:bg-brand-50 hover:text-brand-600">Aspirasi</a>
+            <button onclick="toggleMobileMenu(); openFormWargaModal();" class="w-full mt-2 flex items-center justify-center px-4 py-3 rounded-xl bg-brand-600 text-white font-semibold shadow-md">
+                <i class="fa-solid fa-user-plus mr-2"></i> Form Pendataan Warga
+            </button>
+        </div>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section id="beranda" class="relative pt-12 pb-20 md:pt-20 md:pb-28 bg-grid-pattern overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                
+                <!-- Hero Left Column -->
+                <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+                    <div class="inline-flex items-center space-x-2 px-3 py-1.5 rounded-full bg-brand-50 border border-brand-200 text-brand-700 text-xs sm:text-sm font-semibold">
+                        <span class="w-2 h-2 rounded-full bg-brand-500 animate-ping"></span>
+                        <span>Portal Profiling & Pelayanan RT Digital</span>
+                    </div>
+
+                    <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight">
+                        Satu Data Rukun Tetangga,<br class="hidden sm:inline">
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-600 to-teal-600">
+                            Mewujudkan RT Transparan & Mandiri
+                        </span>
+                    </h1>
+
+                    <p class="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+                        Sistem informasi resmi Rukun Tetangga 005 / RW 012. Permudah pendataan swadaya warga, layanan pengajuan surat pengantar, direktori ekonomi UMKM lokal, dan penyampaian aspirasi secara online.
+                    </p>
+
+                    <!-- Hero Actions -->
+                    <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 sm:gap-4 pt-2">
+                        <button onclick="openFormWargaModal()" class="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-base shadow-xl shadow-brand-600/30 transition-all transform hover:-translate-y-0.5 active:translate-y-0">
+                            <i class="fa-solid fa-address-card mr-2.5"></i> Update / Isi Data Profiling
+                        </button>
+                        <a href="#layanan" class="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3.5 rounded-xl bg-white hover:bg-slate-100 text-slate-800 font-bold text-base border border-slate-200 shadow-sm transition-all">
+                            <i class="fa-solid fa-file-signature mr-2.5 text-brand-600"></i> Buat Surat Pengantar
+                        </a>
+                    </div>
+
+                    <!-- Quick Highlights -->
+                    <div class="pt-6 grid grid-cols-3 gap-4 border-t border-slate-200/80 max-w-lg mx-auto lg:mx-0">
+                        <div>
+                            <p class="text-2xl font-bold text-slate-900" id="heroStatKK">64</p>
+                            <p class="text-xs text-slate-500 font-medium">Kepala Keluarga</p>
+                        </div>
+                        <div>
+                            <p class="text-2xl font-bold text-slate-900" id="heroStatWarga">248</p>
+                            <p class="text-xs text-slate-500 font-medium">Total Jiwa Warga</p>
+                        </div>
+                        <div>
+                            <p class="text-2xl font-bold text-brand-600" id="heroStatUMKM">14</p>
+                            <p class="text-xs text-slate-500 font-medium">UMKM Binaan</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hero Right Card / Announcement Feature -->
+                <div class="lg:col-span-5">
+                    <div class="relative mx-auto max-w-md lg:max-w-none">
+                        <div class="absolute -inset-1 rounded-3xl bg-gradient-to-r from-brand-500 to-teal-400 blur-lg opacity-30 animate-pulse"></div>
+                        <div class="relative glass-card rounded-2xl p-6 sm:p-8 shadow-xl">
+                            <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                                    <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                                    <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                                </div>
+                                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Pengumuman Penting</span>
+                            </div>
+
+                            <div class="space-y-4">
+                                <div class="p-4 rounded-xl bg-brand-50/70 border border-brand-100">
+                                    <span class="inline-block px-2 py-0.5 rounded bg-brand-200 text-brand-800 text-xs font-bold mb-1">Agenda Minggu Ini</span>
+                                    <h4 class="font-bold text-slate-900 text-sm">Gotong Royong Kebersihan Saluran Air</h4>
+                                    <p class="text-xs text-slate-600 mt-1"><i class="fa-regular fa-clock mr-1"></i> Minggu, 07:00 WIB • Lapangan RT 005</p>
+                                </div>
+
+                                <div class="p-4 rounded-xl bg-amber-50/70 border border-amber-100">
+                                    <span class="inline-block px-2 py-0.5 rounded bg-amber-200 text-amber-900 text-xs font-bold mb-1">Jadwal Siskamling</span>
+                                    <h4 class="font-bold text-slate-900 text-sm">Ronda Malam Sektor A & B</h4>
+                                    <p class="text-xs text-slate-600 mt-1"><i class="fa-solid fa-shield-halved mr-1"></i> Setiap Malam Pukul 22:00 - 04:00 WIB</p>
+                                </div>
+
+                                <div class="p-4 rounded-xl bg-blue-50/70 border border-blue-100">
+                                    <span class="inline-block px-2 py-0.5 rounded bg-blue-200 text-blue-900 text-xs font-bold mb-1">Posyandu Balita</span>
+                                    <h4 class="font-bold text-slate-900 text-sm">Pemeriksaan Rutin & Vitamin</h4>
+                                    <p class="text-xs text-slate-600 mt-1"><i class="fa-regular fa-calendar-check mr-1"></i> Tanggal 15 Setiap Bulan • Pos Rawa</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- STATISTIK & PROFIL DEMOGRAFI SECTION -->
+    <section id="statistik" class="py-16 bg-white border-y border-slate-200/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-12">
+                <h2 class="text-xs font-bold uppercase tracking-wider text-brand-600 mb-2">Profil & Demografi RT</h2>
+                <h3 class="text-2xl sm:text-3xl font-extrabold text-slate-900">Statistik Wilayah RT 005 / RW 012</h3>
+                <p class="text-slate-600 mt-2 text-sm sm:text-base">Data statistik kependudukan ter-update hasil akumulasi formulir profiling warga.</p>
+            </div>
+
+            <!-- Stats Grid Cards -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 mb-12">
+                <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200/70 shadow-sm text-center hover:border-brand-300 transition-colors">
+                    <div class="w-12 h-12 mx-auto rounded-xl bg-brand-100 text-brand-600 flex items-center justify-center text-xl mb-3">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+                    <span class="text-3xl font-black text-slate-900 block" id="cardTotalWarga">248</span>
+                    <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Jiwa</span>
+                </div>
+
+                <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200/70 shadow-sm text-center hover:border-brand-300 transition-colors">
+                    <div class="w-12 h-12 mx-auto rounded-xl bg-teal-100 text-teal-600 flex items-center justify-center text-xl mb-3">
+                        <i class="fa-solid fa-people-roof"></i>
+                    </div>
+                    <span class="text-3xl font-black text-slate-900 block" id="cardTotalKK">64</span>
+                    <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Kepala Keluarga</span>
+                </div>
+
+                <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200/70 shadow-sm text-center hover:border-brand-300 transition-colors">
+                    <div class="w-12 h-12 mx-auto rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center text-xl mb-3">
+                        <i class="fa-solid fa-person"></i>
+                    </div>
+                    <span class="text-3xl font-black text-slate-900 block" id="cardLaki">126</span>
+                    <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Laki-Laki</span>
+                </div>
+
+                <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200/70 shadow-sm text-center hover:border-brand-300 transition-colors">
+                    <div class="w-12 h-12 mx-auto rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center text-xl mb-3">
+                        <i class="fa-solid fa-person-dress"></i>
+                    </div>
+                    <span class="text-3xl font-black text-slate-900 block" id="cardPerempuan">122</span>
+                    <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Perempuan</span>
+                </div>
+            </div>
+
+            <!-- Charts Container -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Chart Gender & Usia -->
+                <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200 shadow-sm">
+                    <h4 class="font-bold text-slate-800 mb-4 flex items-center">
+                        <i class="fa-solid fa-chart-pie text-brand-600 mr-2"></i> Komposisi Gender
+                    </h4>
+                    <div class="h-64 relative">
+                        <canvas id="genderChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Chart Status Kepemilikan Rumah -->
+                <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200 shadow-sm">
+                    <h4 class="font-bold text-slate-800 mb-4 flex items-center">
+                        <i class="fa-solid fa-chart-column text-brand-600 mr-2"></i> Kategori Pekerjaan Warga
+                    </h4>
+                    <div class="h-64 relative">
+                        <canvas id="jobChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- LAYANAN MANDIRI & SURAT PENGANTAR -->
+    <section id="layanan" class="py-16 bg-slate-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-12">
+                <h2 class="text-xs font-bold uppercase tracking-wider text-brand-600 mb-2">Layanan Warga Mandiri</h2>
+                <h3 class="text-2xl sm:text-3xl font-extrabold text-slate-900">Pengajuan Surat Pengantar RT</h3>
+                <p class="text-slate-600 mt-2 text-sm sm:text-base">Ajukan surat keterangan atau surat pengantar RT tanpa harus menunggu lama.</p>
+            </div>
+
+            <div class="max-w-3xl mx-auto bg-white rounded-3xl p-6 sm:p-10 border border-slate-200 shadow-xl">
+                <form id="formSurat" onsubmit="handleFormSuratSubmit(event)" class="space-y-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-2">Nama Lengkap Pemohon *</label>
+                            <input type="text" id="suratNama" required class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none text-sm transition-all" placeholder="Sesuai KTP">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-2">NIK Pemohon *</label>
+                            <input type="text" id="suratNik" maxlength="16" required class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none text-sm transition-all" placeholder="16 Digit NIK">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-2">Jenis Surat Pengantar *</label>
+                            <select id="suratJenis" required class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none text-sm transition-all">
+                                <option value="">-- Pilih Jenis Surat --</option>
+                                <option value="Surat Keterangan Domisili">Surat Keterangan Domisili</option>
+                                <option value="Surat Pengantar SKCK">Surat Pengantar SKCK / Kepolisian</option>
+                                <option value="Surat Keterangan Belum Menikah">Surat Keterangan Belum Menikah</option>
+                                <option value="Surat Keterangan Usaha (SKU)">Surat Keterangan Usaha (SKU)</option>
+                                <option value="Surat Keterangan Menikah">Surat Pengantar Nikah (NA)</option>
+                                <option value="Surat Keterangan Tidak Mampu">Surat Keterangan Tidak Mampu (SKTM)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-2">No. WhatsApp / Kontak *</label>
+                            <input type="tel" id="suratWa" required class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none text-sm transition-all" placeholder="08xxxxxxxxxx">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">Maksud & Keperluan Pengajuan *</label>
+                        <textarea id="suratKeperluan" rows="3" required class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none text-sm transition-all" placeholder="Jelaskan detail keperluan pembuatan surat..."></textarea>
+                    </div>
+
+                    <div class="pt-2">
+                        <button type="submit" id="btnSuratSubmit" class="w-full py-3.5 px-6 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold shadow-lg shadow-brand-600/25 transition-all">
+                            <i class="fa-solid fa-paper-plane mr-2"></i> Kirim Permohonan Surat
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- DIREKTORI UMKM WARGA -->
+    <section id="umkm" class="py-16 bg-white border-t border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-10">
+                <div>
+                    <h2 class="text-xs font-bold uppercase tracking-wider text-brand-600 mb-2">Ekonomi Lokal Warga</h2>
+                    <h3 class="text-2xl sm:text-3xl font-extrabold text-slate-900">Direktori UMKM RT 005</h3>
+                    <p class="text-slate-600 mt-1 text-sm">Dukung usaha tetangga kita sendiri! Produk & jasa karya warga sekitar.</p>
+                </div>
+            </div>
+
+            <!-- UMKM Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- UMKM Item 1 -->
+                <div class="bg-slate-50 rounded-2xl p-5 border border-slate-200 hover:shadow-md transition-shadow">
+                    <div class="flex items-start justify-between">
+                        <div class="w-12 h-12 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center text-xl font-bold">
+                            <i class="fa-solid fa-utensils"></i>
+                        </div>
+                        <span class="px-2.5 py-1 rounded-full bg-slate-200 text-slate-700 text-xs font-semibold">Kuliner</span>
+                    </div>
+                    <h4 class="font-bold text-slate-900 text-lg mt-4">Warung Makan Bu Ani</h4>
+                    <p class="text-xs text-slate-500 mt-0.5"><i class="fa-solid fa-location-dot mr-1"></i> Rumah No. A-12</p>
+                    <p class="text-sm text-slate-600 mt-3">Menyediakan Masakan Padang, Nasi Uduk, Aneka Lauk Pauk Segar & Es Teh Manis.</p>
+                    <div class="mt-4 pt-3 border-t border-slate-200 flex items-center justify-between">
+                        <span class="text-xs font-medium text-slate-500">Pemilik: Ibu Ani</span>
+                        <a href="https://wa.me/6281234567890?text=Halo%20Bu%20Ani,%20saya%20warga%20RT%20005%20mau%20pesan" target="_blank" class="px-3 py-1.5 rounded-lg bg-green-500 hover:bg-green-600 text-white text-xs font-bold inline-flex items-center">
+                            <i class="fa-brands fa-whatsapp mr-1 text-sm"></i> Pesan WA
+                        </a>
+                    </div>
+                </div>
+
+                <!-- UMKM Item 2 -->
+                <div class="bg-slate-50 rounded-2xl p-5 border border-slate-200 hover:shadow-md transition-shadow">
+                    <div class="flex items-start justify-between">
+                        <div class="w-12 h-12 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center text-xl font-bold">
+                            <i class="fa-solid fa-wrench"></i>
+                        </div>
+                        <span class="px-2.5 py-1 rounded-full bg-slate-200 text-slate-700 text-xs font-semibold">Jasa</span>
+                    </div>
+                    <h4 class="font-bold text-slate-900 text-lg mt-4">Service AC & Elektronik Pak Budi</h4>
+                    <p class="text-xs text-slate-500 mt-0.5"><i class="fa-solid fa-location-dot mr-1"></i> Rumah No. C-05</p>
+                    <p class="text-sm text-slate-600 mt-3">Melayani cuci AC rutin, tambah freon, perbaikan kulkas, dan instalasi listrik rumah.</p>
+                    <div class="mt-4 pt-3 border-t border-slate-200 flex items-center justify-between">
+                        <span class="text-xs font-medium text-slate-500">Pemilik: Bpk. Budi</span>
+                        <a href="https://wa.me/6281234567891?text=Halo%20Pak%20Budi,%20saya%20mau%20service%20AC" target="_blank" class="px-3 py-1.5 rounded-lg bg-green-500 hover:bg-green-600 text-white text-xs font-bold inline-flex items-center">
+                            <i class="fa-brands fa-whatsapp mr-1 text-sm"></i> Hubungi WA
+                        </a>
+                    </div>
+                </div>
+
+                <!-- UMKM Item 3 -->
+                <div class="bg-slate-50 rounded-2xl p-5 border border-slate-200 hover:shadow-md transition-shadow">
+                    <div class="flex items-start justify-between">
+                        <div class="w-12 h-12 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center text-xl font-bold">
+                            <i class="fa-solid fa-shirt"></i>
+                        </div>
+                        <span class="px-2.5 py-1 rounded-full bg-slate-200 text-slate-700 text-xs font-semibold">Jasa</span>
+                    </div>
+                    <h4 class="font-bold text-slate-900 text-lg mt-4">Laundry Kilat Bersih</h4>
+                    <p class="text-xs text-slate-500 mt-0.5"><i class="fa-solid fa-location-dot mr-1"></i> Rumah No. B-08</p>
+                    <p class="text-sm text-slate-600 mt-3">Cuci lipat, cuci setrika, sprei & karpet. Gratis antar jemput untuk area RT 005.</p>
+                    <div class="mt-4 pt-3 border-t border-slate-200 flex items-center justify-between">
+                        <span class="text-xs font-medium text-slate-500">Pemilik: Mba Dewi</span>
+                        <a href="https://wa.me/6281234567892?text=Halo%20Mba%20Dewi,%20mau%20antar%20jemput%20laundry" target="_blank" class="px-3 py-1.5 rounded-lg bg-green-500 hover:bg-green-600 text-white text-xs font-bold inline-flex items-center">
+                            <i class="fa-brands fa-whatsapp mr-1 text-sm"></i> Pesan WA
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ASPIRASI & PENGADUAN WARGA -->
+    <section id="pengaduan" class="py-16 bg-slate-50 border-t border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+                <div class="lg:col-span-5 space-y-4">
+                    <h2 class="text-xs font-bold uppercase tracking-wider text-brand-600">Aspirasi & Pengaduan</h2>
+                    <h3 class="text-2xl sm:text-3xl font-extrabold text-slate-900">Suara Warga Untuk Kemajuan RT</h3>
+                    <p class="text-slate-600 text-sm sm:text-base leading-relaxed">
+                        Ada fasilitas lingkungan yang rusak, kendala keamanan, atau ide kreatif untuk lingkungan kita? Sampaikan saran & pengaduan Anda secara tertulis di sini.
+                    </p>
+                    <div class="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-start space-x-3 text-xs text-emerald-900">
+                        <i class="fa-solid fa-shield-cat text-lg text-emerald-600 mt-0.5"></i>
+                        <span>Pengurus RT akan memproses setiap saran & pengaduan secara profesional dan transparan.</span>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-7 bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-lg">
+                    <form id="formAspirasi" onsubmit="handleFormAspirasiSubmit(event)" class="space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Nama Pelapor *</label>
+                                <input type="text" id="aspNama" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-brand-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">No. Rumah / Blok *</label>
+                                <input type="text" id="aspRumah" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-brand-500 outline-none" placeholder="Misal: Blok B No. 4">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">No. WhatsApp *</label>
+                                <input type="tel" id="aspWa" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-brand-500 outline-none" placeholder="08xxx">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Kategori Laporan *</label>
+                                <select id="aspKategori" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-brand-500 outline-none">
+                                    <option value="Fasilitas Umum">Keamanan & Ronda</option>
+                                    <option value="Kebersihan">Kebersihan & Sampah</option>
+                                    <option value="Fasilitas">Lampu Jalan & Saluran Air</option>
+                                    <option value="Saran">Saran Program Kegiatan</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Isi Saran / Laporan *</label>
+                            <textarea id="aspIsi" rows="3" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-brand-500 outline-none" placeholder="Detail pengaduan atau ide Anda..."></textarea>
+                        </div>
+
+                        <button type="submit" id="btnAspSubmit" class="w-full py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm shadow-md transition-all">
+                            <i class="fa-solid fa-paper-plane mr-2"></i> Kirim Aspirasi Warga
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER & EMERGENCIES -->
+    <footer class="bg-slate-900 text-slate-300 py-12 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 pb-8 border-b border-slate-800">
+                <div>
+                    <h4 class="text-white font-extrabold text-lg mb-3">RT 005 / RW 012</h4>
+                    <p class="text-xs text-slate-400 leading-relaxed">
+                        Kelurahan Sejahtera, Kecamatan Asri.<br>
+                        Sekretariat: Pos Warga RT 005, Jl. Mawar No. 1.
+                    </p>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-bold text-sm mb-3">Kontak Penting & Darurat</h4>
+                    <ul class="text-xs space-y-2 text-slate-400">
+                        <li><i class="fa-solid fa-phone text-brand-500 mr-2"></i> Ketua RT (Bpk. Ahmad): 0812-9988-7766</li>
+                        <li><i class="fa-solid fa-phone text-brand-500 mr-2"></i> Pos Keamanan / Kamtibmas: 0812-1122-3344</li>
+                        <li><i class="fa-solid fa-truck-medical text-rose-500 mr-2"></i> Puskesmas Pembantu: (021) 555-0199</li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-bold text-sm mb-3">Sistem Apps Script</h4>
+                    <p class="text-xs text-slate-400">
+                        Website ini didukung penuh oleh Google Apps Script & Google Sheets sebagai basis data swadaya masyarakat.
+                    </p>
+                    <div class="mt-3 inline-block px-3 py-1 rounded bg-slate-800 border border-slate-700 text-slate-300 text-xs font-mono">
+                        Status: Server Operational <span class="w-2 h-2 rounded-full bg-emerald-400 inline-block ml-1"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center text-xs text-slate-500">
+                &copy; 2026 Profil RT Digital • Dikembangkan untuk Kemandirian Warga RT 005.
+            </div>
+        </div>
+    </footer>
+
+    <!-- MODAL FORM PROFILING WARGA (POPUP) -->
+    <div id="modalWarga" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden my-8 transform transition-all">
+            <!-- Modal Header -->
+            <div class="bg-gradient-to-r from-brand-600 to-teal-600 px-6 py-4 text-white flex items-center justify-between">
+                <div>
+                    <h3 class="font-extrabold text-lg">Form Pendataan Profiling Warga</h3>
+                    <p class="text-xs text-brand-100">Lengkapi data keluarga Anda untuk pemutakhiran data RT</p>
+                </div>
+                <button onclick="closeFormWargaModal()" class="text-white/80 hover:text-white p-2 rounded-lg hover:bg-white/10 transition-colors">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Modal Form Body -->
+            <form id="formWarga" onsubmit="handleFormWargaSubmit(event)" class="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">No. Kartu Keluarga (KK) *</label>
+                        <input type="text" id="wargaKK" required maxlength="16" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-brand-500 outline-none" placeholder="16 Digit No. KK">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">NIK Kepala Keluarga / Warga *</label>
+                        <input type="text" id="wargaNIK" required maxlength="16" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-brand-500 outline-none" placeholder="16 Digit NIK">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Nama Lengkap *</label>
+                        <input type="text" id="wargaNama" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-brand-500 outline-none" placeholder="Nama Lengkap">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Jenis Kelamin *</label>
+                        <select id="wargaJK" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-brand-500 outline-none">
+                            <option value="Laki-laki">Laki-laki</option>
+                            <option value="Perempuan">Perempuan</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Tempat Lahir *</label>
+                        <input type="text" id="wargaTempatLahir" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-brand-500 outline-none" placeholder="Kota Lahir">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Tanggal Lahir *</label>
+                        <input type="date" id="wargaTglLahir" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-brand-500 outline-none">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Pekerjaan Utama *</label>
+                        <input type="text" id="wargaPekerjaan" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-brand-500 outline-none" placeholder="Misal: Karyawan / PNS / Wirausaha">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">No. WhatsApp Aktif *</label>
+                        <input type="tel" id="wargaWA" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-brand-500 outline-none" placeholder="08xxxxxxxxxx">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">No. Rumah / Blok *</label>
+                        <input type="text" id="wargaAlamat" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-brand-500 outline-none" placeholder="No. A-05">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Jumlah Anggota KK *</label>
+                        <input type="number" min="1" max="15" value="3" id="wargaJumlahKeluarga" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-brand-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Status Rumah *</label>
+                        <select id="wargaStatusRumah" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-brand-500 outline-none">
+                            <option value="Milik Sendiri">Milik Sendiri</option>
+                            <option value="Sewa / Kontrak">Sewa / Kontrak</option>
+                            <option value="Rumah Orang Tua">Rumah Orang Tua</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Action buttons -->
+                <div class="pt-4 flex items-center justify-end space-x-3 border-t border-slate-200">
+                    <button type="button" onclick="closeFormWargaModal()" class="px-5 py-2.5 rounded-xl border border-slate-300 text-slate-700 font-semibold text-sm hover:bg-slate-100">Batal</button>
+                    <button type="submit" id="btnWargaSubmit" class="px-6 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-sm shadow-md">
+                        <i class="fa-solid fa-save mr-2"></i> Simpan Data Profiling
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- CUSTOM TOAST NOTIFICATION CONTAINER -->
+    <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col space-y-2 max-w-sm pointer-events-none"></div>
+
+    <script>
+        // Global Charts Reference
+        let genderChartInstance = null;
+        let jobChartInstance = null;
+
+        // On Page Load
+        document.addEventListener("DOMContentLoaded", function () {
+            initCharts();
+            loadStats();
+        });
+
+        // Mobile Menu Toggle
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            const icon = document.getElementById('mobileMenuIcon');
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                icon.className = 'fa-solid fa-xmark text-xl';
+            } else {
+                menu.classList.add('hidden');
+                icon.className = 'fa-solid fa-bars text-xl';
+            }
+        }
+
+        // Modal Form Warga Logic
+        function openFormWargaModal() {
+            document.getElementById('modalWarga').classList.remove('hidden');
+        }
+        function closeFormWargaModal() {
+            document.getElementById('modalWarga').classList.add('hidden');
+        }
+
+        // Custom Toast Helper
+        function showToast(title, message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            
+            const bgColor = type === 'success' ? 'bg-emerald-800' : 'bg-rose-800';
+            const icon = type === 'success' ? 'fa-circle-check' : 'fa-circle-exclamation';
+
+            toast.className = `pointer-events-auto flex items-start space-x-3 p-4 rounded-xl text-white shadow-xl ${bgColor} transition-all duration-300 transform translate-y-2 opacity-0`;
+            toast.innerHTML = `
+                <i class="fa-solid ${icon} text-lg mt-0.5"></i>
+                <div class="flex-1">
+                    <p class="font-bold text-sm">${title}</p>
+                    <p class="text-xs text-slate-200 mt-0.5">${message}</p>
+                </div>
+            `;
+
+            container.appendChild(toast);
+
+            // Animate in
+            setTimeout(() => {
+                toast.classList.remove('translate-y-2', 'opacity-0');
+            }, 10);
+
+            // Animate out after 4s
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+
+        // Fetch or load stats
+        function loadStats() {
+            if (typeof google !== 'undefined' && google.script && google.script.run) {
+                google.script.run
+                    .withSuccessHandler(updateStatsUI)
+                    .withFailureHandler(function(err) {
+                        console.warn("GAS stats fetch fallback used", err);
+                    })
+                    .getRTStats();
+            }
+        }
+
+        function updateStatsUI(res) {
+            if (res && res.success && res.stats) {
+                const s = res.stats;
+                document.getElementById('heroStatKK').innerText = s.totalKK;
+                document.getElementById('heroStatWarga').innerText = s.totalWarga;
+                document.getElementById('heroStatUMKM').innerText = s.umkmAktif;
+
+                document.getElementById('cardTotalWarga').innerText = s.totalWarga;
+                document.getElementById('cardTotalKK').innerText = s.totalKK;
+                document.getElementById('cardLaki').innerText = s.lakiLaki;
+                document.getElementById('cardPerempuan').innerText = s.perempuan;
+
+                // Update gender chart data
+                if (genderChartInstance) {
+                    genderChartInstance.data.datasets[0].data = [s.lakiLaki, s.perempuan];
+                    genderChartInstance.update();
+                }
+            }
+        }
+
+        // Initialize Chart.js
+        function initCharts() {
+            // Chart 1: Gender
+            const ctxGender = document.getElementById('genderChart').getContext('2d');
+            genderChartInstance = new Chart(ctxGender, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Laki-laki', 'Perempuan'],
+                    datasets: [{
+                        data: [126, 122],
+                        backgroundColor: ['#6366f1', '#f43f5e'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+
+            // Chart 2: Jobs
+            const ctxJob = document.getElementById('jobChart').getContext('2d');
+            jobChartInstance = new Chart(ctxJob, {
+                type: 'bar',
+                data: {
+                    labels: ['Karyawan', 'Wirausaha', 'PNS/TNI', 'Ibu RT', 'Lainnya'],
+                    datasets: [{
+                        label: 'Jumlah Warga',
+                        data: [85, 42, 18, 54, 49],
+                        backgroundColor: '#10b981',
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+        }
+
+        // Form Warga Submit Handler
+        function handleFormWargaSubmit(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnWargaSubmit');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Menyimpan...';
+
+            const payload = {
+                noKK: document.getElementById('wargaKK').value,
+                nik: document.getElementById('wargaNIK').value,
+                namaLengkap: document.getElementById('wargaNama').value,
+                jenisKelamin: document.getElementById('wargaJK').value,
+                tempatLahir: document.getElementById('wargaTempatLahir').value,
+                tanggalLahir: document.getElementById('wargaTglLahir').value,
+                pekerjaan: document.getElementById('wargaPekerjaan').value,
+                noWa: document.getElementById('wargaWA').value,
+                alamatRumah: document.getElementById('wargaAlamat').value,
+                jumlahKeluarga: document.getElementById('wargaJumlahKeluarga').value,
+                statusRumah: document.getElementById('wargaStatusRumah').value
+            };
+
+            if (typeof google !== 'undefined' && google.script && google.script.run) {
+                google.script.run
+                    .withSuccessHandler(function(res) {
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="fa-solid fa-save mr-2"></i> Simpan Data Profiling';
+                        if (res.success) {
+                            showToast("Berhasil!", res.message, "success");
+                            closeFormWargaModal();
+                            document.getElementById('formWarga').reset();
+                            loadStats();
+                        } else {
+                            showToast("Gagal", res.message, "error");
+                        }
+                    })
+                    .withFailureHandler(function(err) {
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="fa-solid fa-save mr-2"></i> Simpan Data Profiling';
+                        showToast("Error", "Gagal mengirim data: " + err, "error");
+                    })
+                    .submitDataWarga(payload);
+            } else {
+                // Fallback simulation mode
+                setTimeout(() => {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fa-solid fa-save mr-2"></i> Simpan Data Profiling';
+                    showToast("Tersimpan (Mode Simulasi)", "Data warga berhasil dicatat!", "success");
+                    closeFormWargaModal();
+                    document.getElementById('formWarga').reset();
+                }, 800);
+            }
+        }
+
+        // Form Surat Submit Handler
+        function handleFormSuratSubmit(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnSuratSubmit');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Mengirim Pengajuan...';
+
+            const payload = {
+                namaWarga: document.getElementById('suratNama').value,
+                nik: document.getElementById('suratNik').value,
+                jenisSurat: document.getElementById('suratJenis').value,
+                noWa: document.getElementById('suratWa').value,
+                keperluan: document.getElementById('suratKeperluan').value
+            };
+
+            if (typeof google !== 'undefined' && google.script && google.script.run) {
+                google.script.run
+                    .withSuccessHandler(function(res) {
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="fa-solid fa-paper-plane mr-2"></i> Kirim Permohonan Surat';
+                        if (res.success) {
+                            showToast("Permohonan Terkirim!", res.message, "success");
+                            document.getElementById('formSurat').reset();
+                        } else {
+                            showToast("Gagal", res.message, "error");
+                        }
+                    })
+                    .withFailureHandler(function(err) {
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="fa-solid fa-paper-plane mr-2"></i> Kirim Permohonan Surat';
+                        showToast("Error", "Gagal: " + err, "error");
+                    })
+                    .submitPengajuanSurat(payload);
+            } else {
+                setTimeout(() => {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fa-solid fa-paper-plane mr-2"></i> Kirim Permohonan Surat';
+                    showToast("Terkirim (Simulasi)", "Pengajuan surat pengantar berhasil dikirim ke Pengurus RT!", "success");
+                    document.getElementById('formSurat').reset();
+                }, 800);
+            }
+        }
+
+        // Form Aspirasi Handler
+        function handleFormAspirasiSubmit(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnAspSubmit');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Mengirim...';
+
+            const payload = {
+                namaPelapor: document.getElementById('aspNama').value,
+                noRumah: document.getElementById('aspRumah').value,
+                noWa: document.getElementById('aspWa').value,
+                kategori: document.getElementById('aspKategori').value,
+                isiPengaduan: document.getElementById('aspIsi').value
+            };
+
+            if (typeof google !== 'undefined' && google.script && google.script.run) {
+                google.script.run
+                    .withSuccessHandler(function(res) {
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="fa-solid fa-paper-plane mr-2"></i> Kirim Aspirasi Warga';
+                        if (res.success) {
+                            showToast("Terima Kasih!", res.message, "success");
+                            document.getElementById('formAspirasi').reset();
+                        } else {
+                            showToast("Gagal", res.message, "error");
+                        }
+                    })
+                    .withFailureHandler(function(err) {
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="fa-solid fa-paper-plane mr-2"></i> Kirim Aspirasi Warga';
+                        showToast("Error", "Gagal: " + err, "error");
+                    })
+                    .submitPengaduan(payload);
+            } else {
+                setTimeout(() => {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fa-solid fa-paper-plane mr-2"></i> Kirim Aspirasi Warga';
+                    showToast("Aspirasi Diterima", "Laporan/Aspirasi Anda berhasil dicatat oleh sistem!", "success");
+                    document.getElementById('formAspirasi').reset();
+                }, 800);
+            }
+        }
+    </script>
+</body>
+</html>
