@@ -226,11 +226,22 @@ https://script.google.com/d/1Vtog0R6Jfp21xKzWYUwbMhdtX3rjgM_nuTJE9_MOPd47kM7tTqb
 https://docs.google.com/spreadsheets/d/11KRmC_S7HKkIF5QB3X9XC_P8Mut5g0pMcNTkrKx4A5M/edit
 ```
 
-### Web App
+### Web App Development / Test
+
+Untuk testing setelah `clasp push`:
 
 ```text
-Isi dengan URL hasil deploy Google Apps Script Web App.
-Contoh: https://script.google.com/macros/s/DEPLOYMENT_ID/exec
+https://script.google.com/macros/s/AKfycbzoH7dirPSD8vdW0rha-oZC3fbYTQOaxZv1b5zMEsOh/dev
+```
+
+Catatan: URL `/dev` biasanya hanya bisa diakses akun yang punya akses editor ke Apps Script.
+
+### Web App Public / Production
+
+Untuk akses warga/public:
+
+```text
+https://script.google.com/macros/s/AKfycbwBxP4NSp3r6nw4oy7i44FQzAzHgpM_56TNwu8uBh3VBOZGhyRMJ6bqO-b6HkPMKHjmdg/exec
 ```
 
 ## Cara Penggunaan Warga
@@ -259,6 +270,92 @@ Contoh: https://script.google.com/macros/s/DEPLOYMENT_ID/exec
 5. Rekap data sesuai kebutuhan RT.
 
 ## Pengembangan
+
+### Alur perubahan sampai production
+
+1. Ambil update terbaru dari Apps Script jika perlu:
+
+```bash
+clasp pull
+```
+
+2. Edit file lokal:
+
+```text
+code.js
+index.html
+appsscript.json
+README.md
+```
+
+3. Cek perubahan:
+
+```bash
+clasp status
+```
+
+4. Push perubahan ke Apps Script:
+
+```bash
+clasp push
+```
+
+5. Test di URL development:
+
+```text
+https://script.google.com/macros/s/AKfycbzoH7dirPSD8vdW0rha-oZC3fbYTQOaxZv1b5zMEsOh/dev
+```
+
+6. Jika masih ada bug, ulangi edit lokal lalu:
+
+```bash
+clasp push
+```
+
+7. Jika hasil test `/dev` sudah oke, cek daftar deployment:
+
+```bash
+clasp deployments
+```
+
+8. Jika ingin update ke link production lama, ambil `Deployment ID` dari hasil command di atas, lalu deploy ke ID tersebut:
+
+```bash
+clasp deploy -i "DEPLOYMENT_ID_ANDA" -d "Update versi terbaru dari VS Code"
+```
+
+Contoh format hasil `clasp deployments`:
+
+```text
+- AKfycbxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx @HEAD
+- AKfycbwBxP4NSp3r6nw4oy7i44FQzAzHgpM_56TNwu8uBh3VBOZGhyRMJ6bqO-b6HkPMKHjmdg @1
+```
+
+9. Jika ingin membuat link production baru, jalankan:
+
+```bash
+clasp deploy --description "Update production"
+```
+
+10. Buka Apps Script editor jika perlu cek deployment:
+
+```bash
+clasp open
+```
+
+11. Pastikan URL public `/exec` aktif:
+
+```text
+https://script.google.com/macros/s/AKfycbwBxP4NSp3r6nw4oy7i44FQzAzHgpM_56TNwu8uBh3VBOZGhyRMJ6bqO-b6HkPMKHjmdg/exec
+```
+
+12. Jika deploy via UI:
+
+```text
+Deploy > Manage deployments > Edit > Version: New version > Deploy
+```
+
+13. Test ulang URL `/exec` sebagai user public/incognito.
 
 ### Ambil perubahan terbaru dari Apps Script
 
