@@ -11,8 +11,24 @@ function doGet(e) {
     .addMetaTag('viewport', 'width=device-width, initial-scale=1.0');
 }
 
-// BISA DIISI DENGAN URL LENGKAP ATAU HANYA ID SPREADSHEET
-var SPREADSHEET_ID = 'https://docs.google.com/spreadsheets/d/11KRmC_S7HKkIF5QB3X9XC_P8Mut5g0pMcNTkrKx4A5M/edit?gid=0#gid=0';
+// Default fallback jika Script Properties belum diisi.
+var DEFAULT_SPREADSHEET_ID = 'https://docs.google.com/spreadsheets/d/11KRmC_S7HKkIF5QB3X9XC_P8Mut5g0pMcNTkrKx4A5M/edit?gid=0#gid=0';
+
+/**
+ * Helper to get Spreadsheet ID from Script Properties.
+ * Set property key: SPREADSHEET_ID
+ */
+function getSpreadsheetIdConfig() {
+  return PropertiesService.getScriptProperties().getProperty('SPREADSHEET_ID') || DEFAULT_SPREADSHEET_ID;
+}
+
+/**
+ * One-time helper to set Spreadsheet ID in Script Properties.
+ * Run manually from Apps Script editor if needed.
+ */
+function setupSpreadsheetId() {
+  PropertiesService.getScriptProperties().setProperty('SPREADSHEET_ID', DEFAULT_SPREADSHEET_ID);
+}
 
 /**
  * Helper to extract raw ID from a full Google Sheet URL or ID string
@@ -32,7 +48,7 @@ function parseSpreadsheetId(input) {
  */
 function getSpreadsheetDB() {
   var ss = null;
-  var rawId = parseSpreadsheetId(SPREADSHEET_ID);
+  var rawId = parseSpreadsheetId(getSpreadsheetIdConfig());
 
   try {
     if (rawId !== '') {
