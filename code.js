@@ -1,14 +1,32 @@
 function myFunction() {
   
 }
+
+/**
+ * Contoh penggunaan RTHelperLib
+ */
+function tesFungsiLibrary() {
+  var tglLaporan = RTHelperLib.formatTanggalIndo(new Date());
+  Logger.log(tglLaporan);
+
+  var iuranBulanIni = RTHelperLib.formatRupiah(75000);
+  Logger.log(iuranBulanIni);
+
+  var noWaWarga = "081234567890";
+  var valid = RTHelperLib.isValidWA(noWaWarga);
+  Logger.log("Apakah No WA Valid? " + valid);
+}
 /**
  * Main HTTP GET Handler for Google Apps Script Web App
  */
 function doGet(e) {
+  var cacheBust = new Date().getTime();
   return HtmlService.createHtmlOutputFromFile('index')
     .setTitle('Profil RT Digital - Sistem Pendataan & Pelayanan Warga')
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL)
-    .addMetaTag('viewport', 'width=device-width, initial-scale=1.0');
+    .addMetaTag('viewport', 'width=device-width, initial-scale=1.0')
+    .append('<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">')
+    .append('<script>window.cacheVersion=' + cacheBust + '<\/script>');
 }
 
 // Default fallback jika Script Properties belum diisi.
@@ -245,7 +263,7 @@ function submitDataWarga(formData) {
     }
 
     var sheet = ss.getSheetByName('Data Warga');
-    var timestamp = new Date();
+    var timestamp = RTHelperLib.formatTanggalIndo(new Date());
 
     sheet.appendRow([
       timestamp,
@@ -287,7 +305,7 @@ function submitPengajuanSurat(formData) {
     var uploadResult = uploadDokumenPengajuanSurat(formData);
 
     sheet.appendRow([
-      new Date(),
+      RTHelperLib.formatTanggalIndo(new Date()),
       formData.namaWarga,
       "'" + formData.nik,
       formData.jenisSurat,
@@ -314,7 +332,7 @@ function submitPengaduan(formData) {
 
     var sheet = ss.getSheetByName('Pengaduan');
     sheet.appendRow([
-      new Date(),
+      RTHelperLib.formatTanggalIndo(new Date()),
       formData.namaPelapor,
       formData.noRumah,
       "'" + formData.noWa,
@@ -327,6 +345,87 @@ function submitPengaduan(formData) {
   } catch (error) {
     return { success: false, message: 'Gagal menyimpan laporan: ' + error.toString() };
   }
+}
+
+/**
+ * Fungsi untuk memproses data pengaduan atau pendaftaran dari form frontend (index.html)
+ */
+function simpanPengaduanWarga(formData) {
+  try {
+    // 1. Validasi field wajib
+    if (!formData.nama || !formData.nama.trim()) {
+      return { success: false, message: "Nama warga harus diisi!" };
+    }
+    if (!formData.noRumah || !formData.noRumah.trim()) {
+      return { success: false, message: "No. Rumah / Blok harus diisi!" };
+    }
+    if (!formData.noWa || !formData.noWa.trim()) {
+      return { success: false, message: "Nomor WhatsApp harus diisi!" };
+    }
+    if (!formData.pesan || !formData.pesan.trim()) {
+      return { success: false, message: "Isi pengaduan/aspirasi harus diisi!" };
+    }
+
+    // 2. Validasi Nomor WhatsApp menggunakan Library
+    if (!RTHelperLib.isValidWA(formData.noWa)) {
+      return {
+        success: false,
+        message: "Nomor WhatsApp tidak valid! Gunakan format 08xx atau 628xx."
+      };
+    }
+
+    // 3. Sanitasi input teks dari warga menggunakan Library (mencegah XSS/HTML Injection)
+    var namaAman = RTHelperLib.melembutkanTeks(formData.nama.trim());
+    var noRumahAman = RTHelperLib.melembutkanTeks(formData.noRumah.trim());
+    var pesanAman = RTHelperLib.melembutkanTeks(formData.pesan.trim());
+
+    if (!namaAman || !noRumahAman || !pesanAman) {
+      return { success: false, message: "Data tidak valid setelah sanitasi." };
+    }
+
+    // 4. Format Tanggal & Waktu menggunakan Library
+    var tanggalFormatted = RTHelperLib.formatTanggalIndo(new Date());
+
+    // 5. Membuka Google Sheets database RT
+    var ss = getSpreadsheetDB();
+    if (!ss) {
+      return { success: false, message: 'Google Sheet tidak terhubung.' };
+    }
+    var sheet = ss.getSheetByName('Pengaduan');
+
+    // 6. Simpan data yang sudah bersih & terformat ke Sheet
+    sheet.appendRow([
+      tanggalFormatted,
+      namaAman,
+      noRumahAman,
+      "'" + formData.noWa,
+      formData.kategori || '',
+      pesanAman,
+      'Baru'
+    ]);
+
+    return {
+      success: true,
+      message: "Pengaduan berhasil dikirim pada " + tanggalFormatted
+    };
+
+  } catch (error) {
+    return {
+      success: false,
+      message: "Gagal menyimpan data: " + error.toString()
+    };
+  }
+}
+
+/**
+ * Contoh fungsi untuk mengambil data ringkasan Kas/Iuran RT
+ */
+function getRingkasanKas() {
+  var totalSaldo = 1500000;
+  var saldoFormatted = RTHelperLib.formatRupiah(totalSaldo);
+  return {
+    saldo: saldoFormatted
+  };
 }
 
 /**
