@@ -1,6 +1,14 @@
 {
   "timeZone": "Asia/Jakarta",
   "dependencies": {
+    "libraries": [
+      {
+        "userSymbol": "RTHelperLib",
+        "libraryId": "1-cYgbKHQkp84PxJqp7fjSJntYdxcGYPUeVGaQSJ9aJGTxAKRlBP6Z053",
+        "version": "1",
+        "developmentMode": false
+      }
+    ],
     "enabledAdvancedServices": [
       {
         "userSymbol": "Drive",
