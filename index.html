@@ -866,13 +866,40 @@
             btn.disabled = true;
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Mengirim...';
 
-            const payload = {
-                namaPelapor: document.getElementById('aspNama').value,
-                noRumah: document.getElementById('aspRumah').value,
-                noWa: document.getElementById('aspWa').value,
+            var elRumah = document.getElementById('aspRumah');
+            var payload = {
+                nama: (document.getElementById('aspNama').value || '').trim(),
+                noRumah: elRumah ? elRumah.value.trim() : '',
+                noWa: (document.getElementById('aspWa').value || '').trim(),
                 kategori: document.getElementById('aspKategori').value,
-                isiPengaduan: document.getElementById('aspIsi').value
+                pesan: (document.getElementById('aspIsi').value || '').trim()
             };
+
+            // Validasi frontend sebelum kirim
+            if (!payload.nama) {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-paper-plane mr-2"></i> Kirim Aspirasi Warga';
+                showToast("Perhatian", "Nama warga harus diisi!", "error");
+                return;
+            }
+            if (!payload.noRumah) {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-paper-plane mr-2"></i> Kirim Aspirasi Warga';
+                showToast("Perhatian", "No. Rumah / Blok harus diisi!", "error");
+                return;
+            }
+            if (!payload.pesan) {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-paper-plane mr-2"></i> Kirim Aspirasi Warga';
+                showToast("Perhatian", "Isi pengaduan/aspirasi harus diisi!", "error");
+                return;
+            }
+            if (!payload.noWa) {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-paper-plane mr-2"></i> Kirim Aspirasi Warga';
+                showToast("Perhatian", "Nomor WhatsApp harus diisi!", "error");
+                return;
+            }
 
             if (typeof google !== 'undefined' && google.script && google.script.run) {
                 google.script.run
@@ -891,7 +918,7 @@
                         btn.innerHTML = '<i class="fa-solid fa-paper-plane mr-2"></i> Kirim Aspirasi Warga';
                         showToast("Error", "Gagal: " + err, "error");
                     })
-                    .submitPengaduan(payload);
+                    .simpanPengaduanWarga(payload);
             } else {
                 setTimeout(() => {
                     btn.disabled = false;
