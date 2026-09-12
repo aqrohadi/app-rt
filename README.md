@@ -120,22 +120,40 @@ clasp status
 
 ## Development Lokal
 
+Google Apps Script adalah platform berbasis cloud yang tidak dapat dijalankan secara lokal di komputer. Seluruh kode dijalankan di infrastruktur server Google. Oleh karena itu, setiap perubahan yang dilakukan secara lokal wajib di-push terlebih dahulu sebelum dapat diuji.
+
 Alur pengembangan standar:
 
-1. Lakukan perubahan pada file lokal (`code.js`, `index.html`, `appsscript.json`).
-2. Push perubahan ke Apps Script:
+1. **Edit** file lokal (`code.js`, `index.html`, `appsscript.json`).
+2. **Push** perubahan ke Apps Script server:
 
 ```bash
 clasp push
 ```
 
-3. Buka editor Apps Script:
+3. **Tambahkan** library `RTHelperLib` jika belum ada (lihat catatan di bawah).
+4. **Buka** editor Apps Script untuk verifikasi:
 
 ```bash
 clasp open
 ```
 
-4. Uji perubahan melalui editor atau URL development.
+5. **Uji** perubahan melalui editor atau buka URL development:
+
+```
+https://script.google.com/macros/s/.../dev
+```
+
+6. Jika hasil pengujian sudah sesuai dan stabil, **depoly** ke versi production.
+
+### Alur Deployment dari Development ke Production
+
+1. Push perubahan lokal ke Apps Script: `clasp push`
+2. Pastikan library `RTHelperLib` sudah terhubung
+3. Uji di URL development (`/dev`)
+4. Jika sudah berhasil, update deployment production: `clasp deploy -i "DEPLOYMENT_ID" -d "Deskripsi update"`
+5. Uji di URL production (`/exec`) menggunakan browser mode incognito
+6. Jika semua berjalan normal, update selesai
 
 ### Catatan Penting Mengenai Library
 
