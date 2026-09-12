@@ -120,6 +120,13 @@ function buatFolderWarga(namaWarga, nik) {
   }
 
   var folderName = sanitizeFileName(namaWarga + ' - ' + nik);
+
+  // Cek apakah folder dengan nama sama sudah ada
+  var existingFolders = parentFolder.getFoldersByName(folderName);
+  if (existingFolders.hasNext()) {
+    return existingFolders.next().getId();
+  }
+
   var newFolder = parentFolder.createFolder(folderName);
   return newFolder.getId();
 }
