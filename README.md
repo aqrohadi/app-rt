@@ -1,312 +1,103 @@
 # Profil RT Digital
 
-Aplikasi web berbasis Google Apps Script untuk portal informasi, pendataan, dan pelayanan warga RT 005 / RW 012 Kelurahan Sejahtera.
+Aplikasi portal informasi dan pelayanan warga berbasis Google Apps Script yang digunakan oleh RT 005 / RW 012 Kelurahan Sejahtera. Aplikasi ini menyediakan platform digital bagi warga untuk mengakses informasi RT, mengisi data diri, mengajukan surat pengantar, serta menyampaikan aspirasi — secara online tanpa perlu datang langsung ke rumah pengurus.
 
-## Tujuan Aplikasi
+## Akses Aplikasi
 
-Aplikasi ini dibuat untuk membantu pengurus RT mengelola data warga dan layanan administrasi secara digital memakai Google Sheets sebagai database.
+### Versi Development (Pengujian)
+
+```
+https://script.google.com/macros/s/AKfycbzoH7dirPSD8vdW0rha-oZC3fbYTQOaxZv1b5zMEsOh/dev
+```
+
+Akses terbatas untuk pengembang. Hanya dapat dibuka oleh akun yang memiliki akses editor pada project Apps Script.
+
+### Versi Production (Publik)
+
+```
+https://script.google.com/macros/s/AKfycbwBxP4NSp3r6nw4oy7i44FQzAzHgpM_56TNwu8uBh3VBOZGhyRMJ6bqO-b6HkPMKHjmdg/exec
+```
+
+Versi publik yang dapat diakses seluruh warga. Digunakan setelah fitur baru selesai diuji pada versi development.
 
 ## Fungsi Utama
 
-- Portal profil RT digital.
-- Statistik jumlah warga, KK, laki-laki, perempuan, UMKM, kegiatan.
-- Form pendataan warga.
-- Form pengajuan surat pengantar (upload ke Google Drive).
-- Form pengaduan / aspirasi warga (dengan validasi WA, sanitasi XSS).
-- Direktori UMKM warga.
-- Informasi kegiatan dan pengumuman RT.
-- Penyimpanan data otomatis ke Google Sheets.
+Aplikasi menyediakan layanan berikut bagi warga dan pengurus RT:
 
-## Scope Aplikasi
+- **Portal Informasi** — Profil RT, statistik demografis, agenda kegiatan, dan pengumuman.
+- **Pendataan Warga** — Form untuk memperbarui atau menambahkan data diri warga.
+- **Pengajuan Surat Pengantar** — Permohonan surat pengantar dengan upload dokumen pendukung yang disimpan otomatis ke Google Drive.
+- **Aspirasi & Pengaduan** — Form penyampaian laporan, saran, atau keluhan warga dengan validasi data dan notifikasi langsung ke database.
+- **Direktori UMKM** — Informasi usaha Mikro, Kecil, dan Menengah milik warga sekitar.
 
-### Termasuk
+Seluruh data yang diterima dari warga secara otomatis tersimpan ke dalam Google Sheets yang dapat dipantau oleh pengurus RT.
 
-- Frontend landing page warga.
-- Backend Google Apps Script.
-- Database Google Sheets.
-- Penyimpanan dokumen ke Google Drive.
-- Deploy sebagai Google Apps Script Web App.
-- Akses publik untuk warga melalui link web app.
+## Ruang Lingkup
 
-### Tidak Termasuk
+### Fitur yang Tersedia
 
-- Login warga.
-- Role admin dashboard khusus.
-- Upload file lampiran (form pengajuan surat).
-- Verifikasi NIK otomatis Dukcapil.
-- Notifikasi WhatsApp otomatis.
-- Payment/iuran online.
+Landing page publik, formulir interaktif, penyimpanan data ke Google Sheets, upload dokumen ke Google Drive, validasi input, dan statistik otomatis.
 
-## Teknologi / Bahasa
+### Fitur yang Belum Tersedia
 
-- Google Apps Script JavaScript runtime V8.
-- HTML / JavaScript frontend.
-- Tailwind CSS CDN.
-- FontAwesome CDN.
-- Chart.js CDN.
-- Google Sheets sebagai database.
-- Google Drive untuk penyimpanan dokumen.
-- clasp untuk development lokal dan deploy.
+Sistem login warga, panel admin khusus, verifikasi NIK secara otomatis melalui Dukcapil, notifikasi WhatsApp otomatis, dan pembayaran iuran secara online.
 
-## Struktur File
+## Teknologi yang Digunakan
 
-```text
-.
-├── appsscript.json    # Konfigurasi Apps Script (libraries, scopes, webapp)
-├── code.js            # Backend Apps Script (semua server-side functions)
-├── index.html         # Frontend aplikasi web (HTML + Tailwind + JS)
-├── .clasp.json        # Konfigurasi clasp (Script ID)
-├── .gitignore         # Ignore file Git
+| Komponen | Teknologi |
+|----------|-----------|
+| Backend | Google Apps Script (JavaScript V8) |
+| Frontend | HTML, JavaScript, Tailwind CSS (CDN) |
+| Ikon | FontAwesome (CDN) |
+| Visualisasi | Chart.js (CDN) |
+| Database | Google Sheets |
+| Penyimpanan File | Google Drive |
+| Deployment | Google Apps Script Web App |
+| Development Tool | clasp (CLI) |
+
+## Struktur Project
+
+```
+app-rt/
+├── appsscript.json    # Konfigurasi project Apps Script
+├── code.js            # Kode backend utama
+├── index.html         # Tampilan frontend aplikasi
+├── .clasp.json        # Identitas project clasp
+├── .gitignore         # File yang diabaikan Git
 ├── docs/
-│   └── .env           # Credential private (TIDAK di-commit, lihat catatan)
-└── README.md          # Dokumentasi project
+│   └── .env           # Konfigurasi private (tidak di-commit)
+└── README.md          # Dokumentasi ini
 ```
 
-## Database Google Sheets
+## Database
 
-Aplikasi memakai spreadsheet tertentu sebagai database.
+Aplikasi menggunakan Google Sheets sebagai database utama. Tabel secara otomatis dibuat saat pertama kali fungsi terkait dijalankan jika belum tersedia.
 
-Sheet otomatis dibuat jika belum ada saat pertama kali fungsi dijalankan.
+### Sheet: Data Warga
 
-### Data Warga
+Berisi identitas dan informasi rumah tangga warga. Kolom meliputi Timestamp, Nomor KK, NIK, Nama Lengkap, Jenis Kelamin, Tempat/Tanggal Lahir, Agama, Pekerjaan, Status Perkawinan, Alamat/Nomor Rumah, Nomor WhatsApp, Jumlah Anggota Keluarga, Status Tempat Tinggal, dan Kategori Ekonomi.
 
-Kolom:
+### Sheet: Pengaduan
 
-| No | Kolom | Keterangan |
-|----|-------|------------|
-| 1 | Timestamp | Format Indonesia: `Sabtu, 12 September 2026 - 08:00 WIB` |
-| 2 | No. KK | Teks |
-| 3 | NIK | Teks (diberi prefix `'` agar tidak dibaca sebagai angka) |
-| 4 | Nama Lengkap | Teks |
-| 5 | Jenis Kelamin | Laki-laki / Perempuan |
-| 6 | Tempat/Tgl Lahir | Teks |
-| 7 | Agama | Teks |
-| 8 | Pekerjaan | Teks |
-| 9 | Status Perkawinan | Teks |
-| 10 | Alamat / No. Rumah | Teks |
-| 11 | No. WhatsApp | Teks |
-| 12 | Jumlah Anggota Keluarga | Angka |
-| 13 | Status Tempat Tinggal | Teks |
-| 14 | Kategori Ekonomi | Teks |
+Menyimpan laporan dan aspirasi warga. Kolom meliputi Timestamp, Nama Pelapor, Nomor Rumah, Nomor WhatsApp, Kategori Laporan, Isi Pengaduan, dan Status. Timestamp diformat menggunakan library utilitas dalam bahasa Indonesia.
 
-### Pengaduan
+### Sheet: Pengajuan Surat
 
-Kolom:
+Mencatat permohonan surat pengantar dari warga. Kolom meliputi Timestamp, Nama Warga, NIK, Jenis Surat, Keperluan, Nomor WhatsApp, Link Dokumen, Link Folder Drive, dan Status Process. Dokumen yang diupload secara otomatis tersimpan di Google Drive dalam folder terpisah berdasarkan nama dan NIK warga.
 
-| No | Kolom | Keterangan |
-|----|-------|------------|
-| 1 | Timestamp | Format Indonesia |
-| 2 | Nama Pelapor | Teks (sudah disanitasi XSS) |
-| 3 | No. Rumah | Teks (sudah disanitasi XSS) |
-| 4 | No. WA | Teks |
-| 5 | Kategori | Pilihan: Keamanan & Ronda / Kebersihan & Sampah / Lampu Jalan & Saluran Air / Saran Program Kegiatan |
-| 6 | Isi Pengaduan | Teks (sudah disanitasi XSS) |
-| 7 | Status | Default: `Baru` |
+## Prasyarat
 
-### Pengajuan Surat
+Sebelum memulai, pastikan Anda memiliki akun Google, akses ke project Apps Script terkait, akses ke Google Sheets database, Node.js yang terinstall, serta clasp yang sudah dikonfigurasi.
 
-Kolom:
+## Instalasi
 
-| No | Kolom | Keterangan |
-|----|-------|------------|
-| 1 | Timestamp | Format Indonesia |
-| 2 | Nama Warga | Teks |
-| 3 | NIK | Teks |
-| 4 | Jenis Surat | Teks |
-| 5 | Keperluan | Teks |
-| 6 | No. WA | Teks |
-| 7 | Link Dokumen | URL file di Google Drive |
-| 8 | Link Folder Drive | URL folder warga di Google Drive |
-| 9 | Status Process | Default: `Menunggu Persetujuan RT` |
-
-## Library: RTHelperLib
-
-Library eksternal digunakan untuk utilitas umum. Library harus ditambahkan manual ke project.
-
-### Menambahkan Library
-
-1. Buka Apps Script Editor.
-2. Klik **Resources** → **Libraries**.
-3. Klik **Add a library**.
-4. Masukkan Script ID library:
-   ```
-   1-cYgbKHQkp84PxJqp7fjSJntYdxcGYPUeVGaQSJ9aJGTxAKRlBP6Z053
-   ```
-5. Set **Identifier**: `RTHelperLib`.
-6. Set **Version**: `1`.
-7. Klik **Add**.
-8. **Simpan** project.
-
-### Fungsi Library
-
-#### formatTanggalIndo(date)
-
-Format tanggal ke bahasa Indonesia.
-
-```javascript
-// Contoh
-RTHelperLib.formatTanggalIndo(new Date());
-// Output: "Sabtu, 12 September 2026 - 08:00 WIB"
-```
-
-#### formatRupiah(angka)
-
-Format angka ke Rupiah Indonesia.
-
-```javascript
-// Contoh
-RTHelperLib.formatRupiah(75000);    // "Rp 75.000"
-RTHelperLib.formatRupiah(1500000);  // "Rp 1.500.000"
-RTHelperLib.formatRupiah(0);        // "Rp 0"
-```
-
-#### isValidWA(nomor)
-
-Validasi nomor WhatsApp Indonesia.
-
-```javascript
-// Contoh
-RTHelperLib.isValidWA("081234567890");    // true
-RTHelperLib.isValidWA("6281234567890");   // true
-RTHelperLib.isValidWA("081234567");        // false (terlalu pendek)
-RTHelperLib.isValidWA("02123456789");     // false (kode area)
-```
-
-Format diterima: `08xx`, `628xx`, `+628xx` (8-15 digit setelah prefix).
-
-#### melembutkanTeks(teks)
-
-Sanitasi teks untuk mencegah XSS / HTML injection.
-
-```javascript
-// Contoh
-RTHelperLib.melembutkanTeks("<script>alert('xss')</script>");
-// Output: "&lt;script&gt;alert('xss')&lt;/script&gt;"
-```
-
-Digunakan untuk sanitasi `Nama Pelapor`, `No. Rumah`, dan `Isi Pengaduan` sebelum disimpan ke Sheet.
-
-### Test Library
-
-Jalankan dari Apps Script Editor:
-
-```javascript
-function tesFungsiLibrary() {
-  var tgl = RTHelperLib.formatTanggalIndo(new Date());
-  Logger.log(tgl);
-
-  var iuran = RTHelperLib.formatRupiah(75000);
-  Logger.log(iuran);
-
-  var wa = "081234567890";
-  Logger.log("WA valid: " + RTHelperLib.isValidWA(wa));
-}
-```
-
-Output Logs diharapkan:
-
-```
-Sabtu, 12 September 2026 - 08:00 WIB
-Rp 75.000
-WA valid: true
-```
-
-## Konfigurasi Google Drive (Dokumen Pengajuan Surat)
-
-Dokumen pengajuan surat diupload ke Google Drive. Folder utama harus dikonfigurasi dulu.
-
-### Setup Folder
-
-1. Buka Google Drive → buat folder baru (atau gunakan folder existing).
-2. Copy ID folder dari URL:
-   ```
-   https://drive.google.com/drive/folders/1mx_4tHnOQAPk9kAa3oGYhHrLn57bSynF
-   ```
-   ID = `1mx_4tHnOQAPk9kAa3oGYhHrLn57bSynF`
-3. Buka Apps Script Editor.
-4. Jalankan function `setupDriveFolder()` dari dropdown → Run.
-   - Masukkan URL atau ID folder saat diminta, atau jalankan langsung:
-   ```javascript
-   setupDriveFolder('https://drive.google.com/drive/folders/1mx_4tHnOQAPk9kAa3oGYhHrLn57bSynF');
-   ```
-5. Folder berhasil diset → property `DRIVE_FOLDER_UTAMA_RT_ID` tersimpan.
-
-### Debug Konfigurasi Folder
-
-Jika upload gagal, jalankan:
-
-```javascript
-debugScriptProperties();
-```
-
-Cek Logs untuk:
-
-- `Parsed folder ID` — ID yang tersimpan
-- `Folder found` — nama folder jika valid
-- `Folder valid` — `true` / `false`
-
-### Struktur Folder Otomatis
-
-Saat warga submit pengajuan surat:
-
-```
-Folder Utama RT
-└── [Nama Warga] - [NIK]      ← folder baru per warga
-    └── [nama_file_dokumen]   ← file upload
-```
-
-Jika folder `[Nama - NIK]` sudah ada, tidak dibuat ulang (pencegahan duplikat).
-
-## Form Aspirasi / Pengaduan
-
-### Validasi
-
-Validasi dilakukan di **dua layer**:
-
-**Frontend (JavaScript):**
-- Trim spasi sebelum kirim
-- Cek field wajib: Nama, No. Rumah, No. WA, Isi Pengaduan
-- Tampilkan toast error jika ada yang kosong
-
-**Backend (Apps Script):**
-- Cek field wajib setelah diterima
-- Validasi format WA dengan `RTHelperLib.isValidWA()`
-- Sanitasi XSS dengan `RTHelperLib.melembutkanTeks()`
-- Cek hasil sanitasi tidak kosong
-
-### Alur Simpan
-
-1. User isi form → frontend validasi
-2. Payload POST ke `simpanPengaduanWarga(formData)`
-3. Backend: validasi WA → sanitasi teks → format tanggal
-4. Backend: simpan ke sheet `Pengaduan`
-5. Response success/error ke frontend
-
-### Frontend Form Fields
-
-| Field | ID Element | Validasi |
-|-------|-----------|----------|
-| Nama Pelapor | `aspNama` | Wajib, disanitasi |
-| No. Rumah / Blok | `aspRumah` | Wajib, disanitasi |
-| No. WhatsApp | `aspWa` | Wajib, format WA |
-| Kategori Laporan | `aspKategori` | Dropdown |
-| Isi Saran / Laporan | `aspIsi` | Wajib, disanitasi |
-
-## Prasyarat Install
-
-- Akun Google.
-- Akses ke project Google Apps Script.
-- Akses ke Google Sheets database.
-- Node.js dan npm.
-- clasp sudah terinstall.
-
-## Install clasp
+Pasang clasp secara global melalui npm:
 
 ```bash
 npm install -g @google/clasp
 ```
 
-Login ke akun Google:
+Setelah terinstall, login ke akun Google Anda:
 
 ```bash
 clasp login
@@ -314,14 +105,14 @@ clasp login
 
 ## Clone Project
 
-Clone project ke lokal:
+Hubungkan project Apps Script ke direktori lokal:
 
 ```bash
 clasp clone <SCRIPT_ID>
 cd app-rt
 ```
 
-Jika folder sudah ada:
+Jika direktori sudah terhubung sebelumnya, cukup perbarui status:
 
 ```bash
 clasp status
@@ -329,8 +120,10 @@ clasp status
 
 ## Development Lokal
 
-1. Edit file lokal (`code.js`, `index.html`, `appsscript.json`).
-2. Push ke Apps Script:
+Alur pengembangan standar:
+
+1. Lakukan perubahan pada file lokal (`code.js`, `index.html`, `appsscript.json`).
+2. Push perubahan ke Apps Script:
 
 ```bash
 clasp push
@@ -342,20 +135,15 @@ clasp push
 clasp open
 ```
 
-4. Test dari Apps Script editor atau URL development (`/dev`).
+4. Uji perubahan melalui editor atau URL development.
 
-### Catatan Penting: Library RTHelperLib
+### Catatan Penting Mengenai Library
 
-Setiap `clasp push`, referensi library akan **terhapus** dari project. Setelah push, wajib tambah ulang:
-
-1. **Resources** → **Libraries**.
-2. **Add a library** → paste Script ID library.
-3. Set identifier: `RTHelperLib`.
-4. **Add** → **Save**.
-
-Alternatif: simpankan credential di `docs/.env` dan push tidak akan overwrite library jika tidak diedit dari lokal. Library hanya dikelola via editor UI.
+Setiap kali `clasp push` dijalankan, referensi library eksternal akan terhapus dari project. Setelah push, library perlu ditambahkan kembali secara manual melalui editor: klik **Resources** → **Libraries** → **Add a library**, masukkan Script ID library, tetapkan identifier sebagai `RTHelperLib`, lalu klik **Add** dan **Save**.
 
 ## Deploy Web App
+
+Proses deployment ke server Google:
 
 1. Pastikan sudah login:
 
@@ -369,171 +157,87 @@ clasp login
 clasp push
 ```
 
-3. **Tambahkan library** `RTHelperLib` (jika belum ada).
-4. Buka Apps Script:
+3. Pastikan library `RTHelperLib` sudah ditambahkan (lihat catatan di atas).
+4. Buka editor Apps Script:
 
 ```bash
 clasp open
 ```
 
-5. Klik **Deploy** → **New deployment** atau **Manage deployments**.
+5. Klik **Deploy** → **Manage deployments** → **New deployment**.
 6. Pilih type **Web app**.
-7. Konfigurasi:
+7. Atur **Execute as** ke `Me` dan **Who has access** ke `Anyone`.
+8. Klik **Deploy** dan authorize permission saat diminta.
+9. Salin URL web app yang muncul.
 
-```
-Execute as: Me (User deploying)
-Who has access: Anyone
-```
+### Memperbarui Deployment
 
-8. Klik **Deploy**.
-9. Authorize permission.
-10. Copy **Web app URL** (production).
-
-### Update Deployment
-
-Jika sudah ada deployment dan ingin update:
+Jika ingin memperbarui versi production yang sudah ada:
 
 ```bash
 clasp deployments
 ```
 
-Ambil Deployment ID → update:
+Ambil Deployment ID dari hasil perintah, lalu:
 
 ```bash
-clasp deploy -i "DEPLOYMENT_ID" -d "Update deskripsi"
+clasp deploy -i "DEPLOYMENT_ID" -d "Deskripsi update"
 ```
 
-Atau lewat UI: **Manage deployments** → **Edit** → **New version** → **Deploy**.
+Atau melalui UI: **Manage deployments** → **Edit** → **New version** → **Deploy**.
 
-## Konfigurasi Script Properties
+## Konfigurasi
 
-### SPREADSHEET_ID
+Aplikasi menggunakan Script Properties untuk menyimpan konfigurasi sensitif.
 
-ID Google Sheets database. Bisa ID atau URL penuh.
+### Google Sheets ID
 
-Set via UI: **Project Settings** → **Script Properties** → Add property.
+ID spreadsheet database dapat diset melalui UI di **Project Settings** → **Script Properties** → **Add script property**, dengan key `SPREADSHEET_ID` dan value berupa ID atau URL lengkap spreadsheet. Alternatif lain adalah menjalankan fungsi `setupSpreadsheetId()` sekali dari editor.
 
-Atau jalankan sekali dari editor:
+### Folder Google Drive
 
-```javascript
-setupSpreadsheetId();
-```
-
-### DRIVE_FOLDER_UTAMA_RT_ID
-
-ID folder Google Drive untuk simpan dokumen pengajuan surat.
-
-Set:
+Folder utama untuk menyimpan dokumen pengajuan surat dapat dikonfigurasi dengan menjalankan:
 
 ```javascript
 setupDriveFolder('https://drive.google.com/drive/folders/ID_FOLDER_ANDA');
 ```
 
-Debug:
+Untuk memeriksa apakah konfigurasi folder sudah benar, jalankan:
 
 ```javascript
 debugScriptProperties();
 ```
 
-## Struktur Backend (code.js)
+Lalu periksa bagian Logs pada editor.
 
-### Functions Utama
+## Library Utilitas
 
-| Function | Deskripsi |
-|----------|-----------|
-| `doGet(e)` | HTTP GET handler — serve index.html |
-| `submitDataWarga(formData)` | Simpan data warga baru ke sheet |
-| `submitPengajuanSurat(formData)` | Upload dokumen + simpan ke sheet |
-| `submitPengaduan(formData)` | Simpan pengaduan lama (legacy) |
-| `simpanPengaduanWarga(formData)` | Simpan pengaduan baru dengan sanitasi & validasi |
-| `getRTStats()` | Ambil statistik warga dari sheet |
-| `getRingkasanKas()` | Ambil ringkasan kas RT (format Rupiah) |
-| `getSpreadsheetDB()` | Buka/buat spreadsheet database |
-| `setupDriveFolder(urlOrId)` | Set folder Drive utama |
-| `debugScriptProperties()` | Debug konfigurasi Script Properties |
-| `tesFungsiLibrary()` | Test fungsi RTHelperLib |
+Aplikasi menggunakan library eksternal `RTHelperLib` yang menyediakan fungsi utilitas untuk format tanggal dalam bahasa Indonesia, format angka ke Rupiah, validasi nomor WhatsApp, dan sanitasi teks terhadap potensi injeksi XSS.
 
-### Folder & Upload
+Library ditambahkan melalui editor Apps Script pada menu **Resources** → **Libraries** dengan Script ID yang tersimpan dalam file `docs/.env`.
 
-| Function | Deskripsi |
-|----------|-----------|
-| `setupDriveFolder(urlOrId)` | Set dan validasi folder utama |
-| `validateDriveFolderExists(folderId)` | Cek folder bisa diakses |
-| `buatFolderWarga(namaWarga, nik)` | Buat/hapus folder per warga di Drive |
-| `uploadDokumenPengajuanSurat(formData)` | Upload file ke folder warga |
+### Fungsi yang Tersedia
 
-## Struktur Frontend (index.html)
+`formatTanggalIndo(date)` menghasilkan tanggal dalam format Indonesia seperti `Sabtu, 12 September 2026 - 08:00 WIB`. `formatRupiah(angka)` menghasilkan format mata uang seperti `Rp 75.000`. `isValidWA(nomor)` mengembalikan nilai true untuk nomor WhatsApp Indonesia yang valid. `melembutkanTeks(teks)` membersihkan karakter HTML untuk mencegah injeksi XSS.
 
-### Formulir
+## Keamanan
 
-| Form | ID Form | Handler |
-|------|---------|---------|
-| Pendataan Warga | `formWarga` | `handleFormWargaSubmit` |
-| Pengajuan Surat | `formSurat` | `handleFormSuratSubmit` |
-| Aspirasi / Pengaduan | `formAspirasi` | `handleFormAspirasiSubmit` |
+Beberapa langkah keamanan yang diterapkan meliputi sanitasi seluruh input teks sebelum disimpan ke database, validasi format nomor WhatsApp untuk memastikan data yang tersimpan benar, pembatasan akses Google Sheets hanya untuk pengurus RT, serta tidak dibagikan link spreadsheet ke publik. Web App boleh diakses publik karena hanya menyediakan formulir dan tampilan informasi.
 
-### Validasi Frontend
+Lakukan backup Google Sheets secara berkala untuk menjaga keamanan data warga.
 
-Setiap form melakukan validasi client-side sebelum kirim:
+## Maintenance
 
-- Cek field wajib (`required`)
-- Trim spasi
-- Toast error jika ada yang kosong
-- Disable button saat submit untuk cegah double-submit
+Agar aplikasi tetap berjalan optimal, lakukan pengecekan berkala terhadap data duplikat pada kolom NIK dan Nomor KK, perbarui status pengajuan surat dan pengaduan secara manual di spreadsheet, tinjau ulang permission Apps Script jika terjadi pergantian pengurus, serta perbarui library `RTHelperLib` jika terdapat pembaruan fungsi.
 
-## Permission Google
+## Roadmap
 
-Aplikasi membutuhkan izin:
+Fitur yang direncanakan untuk pengembangan selanjutnya meliputi dashboard admin bagi pengurus RT, autentikasi warga dan pengurus, pencarian data warga, ekspor laporan dalam format PDF, integrasi notifikasi WhatsApp otomatis, fitur upload dokumen pendukung, serta manajemen direktori UMKM yang dapat diperbarui langsung dari spreadsheet.
 
-- Membaca & menulis Google Sheets.
-- Membuat folder & file di Google Drive.
-- Menjalankan Web App.
-- Menampilkan HTML.
+## Dokumentasi Lengkap
 
-## Catatan Keamanan
-
-- Data warga berisi NIK, No. KK, alamat, nomor WhatsApp. Batasi akses spreadsheet hanya untuk pengurus.
-- Input teks disanitasi (`melembutkanTeks`) sebelum simpan ke Sheet.
-- Nomor WA divalidasi formatnya sebelum disimpan.
-- Link spreadsheet JANGAN dishare ke publik. Link Web App boleh publik.
-- Backup Google Sheets secara berkala.
-
-## Maintenance Umum
-
-- Cek data duplikat NIK / No. KK secara periodik.
-- Validasi laporan masuk di sheet `Pengaduan`.
-- Update status pengajuan surat di sheet.
-- Review permission Apps Script setelah pergantian pengurus.
-- Update library `RTHelperLib` jika ada update fungsi.
-
-## Roadmap Pengembangan
-
-- Dashboard admin pengurus RT.
-- Login warga / pengurus.
-- Fitur pencarian data warga.
-- Export laporan PDF.
-- Notifikasi WhatsApp otomatis.
-- Upload dokumen pendukung.
-- Manajemen UMKM dinamis dari Google Sheets.
-- Fitur iuran bulanan dengan reminder.
-
-## Catatan Credential & .env
-
-Credential private (Script ID, Spreadsheet ID, Folder ID, dll) **TIDAK boleh di-commit** ke repository.
-
-Simpan di file `docs/.env`. File ini sudah ada di `.gitignore`.
-
-Contoh isi `docs/.env`:
-
-```env
-RT_SCRIPT_ID=YOUR_SCRIPT_ID
-RT_SPREADSHEET_ID=YOUR_SPREADSHEET_ID
-RTHELPERLIB_LIBRARY_ID=YOUR_LIBRARY_ID
-DRIVE_FOLDER_UTAMA_RT_ID=YOUR_FOLDER_ID
-```
-
-Isi `docs/.env` dengan credential asli. File ini tidak dipush ke repository.
+Untuk dokumentasi teknis yang lebih detail mengenai seluruh fungsi, alur kerja, skema database, dan panduan pemecahan masalah, silakan merujuk pada file `docs/dokumentasi.md`.
 
 ## Lisensi
 
-Internal RT 005 / RW 012. Gunakan dan modifikasi sesuai kebutuhan pengurus RT.
+Dikembangkan secara internal untuk RT 005 / RW 012. Silakan gunakan dan modifikasi sesuai kebutuhan pengelolaan RT.
