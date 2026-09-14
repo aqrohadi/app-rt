@@ -4,21 +4,15 @@ Aplikasi portal informasi dan pelayanan warga berbasis Google Apps Script yang d
 
 ## Akses Aplikasi
 
-### Versi Development (Pengujian)
+### Versi Netlify (Frontend Publik)
 
 ```
-https://script.google.com/macros/s/AKfycbzoH7dirPSD8vdW0rha-oZC3fbYTQOaxZv1b5zMEsOh/dev
+https://rt-02-digital.netlify.app/
 ```
 
-Akses terbatas untuk pengembang. Hanya dapat dibuka oleh akun yang memiliki akses editor pada project Apps Script.
+Implementasi frontend saat ini sudah dapat diakses melalui Netlify. Backend tetap berjalan di Google Apps Script, sedangkan Netlify digunakan untuk hosting tampilan aplikasi agar lebih cepat, stabil, dan mudah dihubungkan dengan custom domain.
 
-### Versi Production (Publik)
 
-```
-https://script.google.com/macros/s/AKfycbwBxP4NSp3r6nw4oy7i44FQzAzHgpM_56TNwu8uBh3VBOZGhyRMJ6bqO-b6HkPMKHjmdg/exec
-```
-
-Versi publik yang dapat diakses seluruh warga. Digunakan setelah fitur baru selesai diuji pada versi development.
 
 ## Fungsi Utama
 
@@ -52,7 +46,7 @@ Sistem login warga, panel admin khusus, verifikasi NIK secara otomatis melalui D
 | Visualisasi | Chart.js (CDN) |
 | Database | Google Sheets |
 | Penyimpanan File | Google Drive |
-| Deployment | Google Apps Script Web App |
+| Deployment | Google Apps Script Web App, Netlify, Vercel |
 | Development Tool | clasp (CLI) |
 
 ## Struktur Project
@@ -203,6 +197,19 @@ clasp deploy -i "DEPLOYMENT_ID" -d "Deskripsi update"
 ```
 
 Atau melalui UI: **Manage deployments** → **Edit** → **New version** → **Deploy**.
+
+### Opsi Deployment Alternatif: Netlify atau Vercel
+
+Selain deployment via Google Apps Script, frontend aplikasi ini dapat di-hosting di **Netlify** atau **Vercel** untuk performa yang lebih cepat dan stabil. Backend tetap berjalan di Apps Script, hanya frontend yang dipindahkan ke platform hosting modern.
+
+Keuntungan menggunakan Netlify atau Vercel:
+
+- **Load time lebih cepat** — konten di-serve dari CDN global, bukan dari server Apps Script
+- **Tidak tergantung batas throttling** — Apps Script memiliki batasan execution per menit, hosting eksternal tidak
+- **Custom domain** — bisa pakai domain sendiri seperti `rtku.my.id`
+- **SSL gratis otomatis** — HTTPS aktif tanpa konfigurasi manual
+- **CI/CD otomatis** — setiap push ke repository langsung ter-deploy
+
 
 ## Konfigurasi
 
